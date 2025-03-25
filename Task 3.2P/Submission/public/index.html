@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Two Numbers - Materialize</title>
+  <!-- Materialize CSS -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+  <!-- Google Icons -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body>
+
+  <div class="container">
+    <div class="row">
+      <h4 class="center-align">Add Two Numbers</h4>
+      <form id="addForm" class="col s12">
+        <div class="row">
+          <div class="input-field col s6">
+            <input type="number" id="numA" required>
+            <label for="numA">First Number</label>
+          </div>
+          <div class="input-field col s6">
+            <input type="number" id="numB" required>
+            <label for="numB">Second Number</label>
+          </div>
+        </div>
+        <div class="row center-align">
+          <button class="btn waves-effect waves-light" type="submit">
+            Add
+            <i class="material-icons right">add</i>
+          </button>
+        </div>
+      </form>
+      <div class="row">
+        <h5 class="center-align" id="result"></h5>
+      </div>
+    </div>
+  </div>
+
+  <!-- Materialize JavaScript -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+  <script>
+    document.getElementById('addForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const a = document.getElementById('numA').value;
+      const b = document.getElementById('numB').value;
+
+      try {
+        const response = await fetch(`/add?a=${a}&b=${b}`);
+        const data = await response.json();
+
+        if (data.result !== undefined) {
+          document.getElementById('result').innerText = `Result: ${data.result}`;
+        } else {
+          document.getElementById('result').innerText = `Error: ${data.error}`;
+        }
+      } catch (err) {
+        document.getElementById('result').innerText = 'Error connecting to server.';
+      }
+    });
+
+    // Initialize labels
+    document.addEventListener('DOMContentLoaded', function() {
+      M.updateTextFields();
+    });
+  </script>
+
+</body>
+</html>
