@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Book Review App</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>📚 Book Review App</h1>
+
+    <form id="bookForm">
+      <input type="text" id="title" placeholder="Book Title" required>
+      <input type="text" id="author" placeholder="Author">
+      <input type="text" id="genre" placeholder="Genre">
+      <input type="number" id="year" placeholder="Year">
+      <button type="submit">Add Book</button>
+    </form>
+
+    <div id="bookList"></div>
+  </div>
+
+  <script>
+    const form = document.getElementById('bookForm');
+    const bookList = document.getElementById('bookList');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const book = {
+        title: document.getElementById('title').value,
+        author: document.getElementById('author').value,
+        genre: document.getElementById('genre').value,
+        year: document.getElementById('year').value
+      };
+
+      await fetch('/api/books', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(book)
+      });
+
+      form.reset();
+      loadBooks();
+    });
+
+    async function loadBooks() {
+      const res = await fetch('/api/books');
+      const books = await res.json();
+
+      bookList.innerHTML = '';
+      books.forEach(book => {
+        const div = document.createElement('div');
+        div.className = 'book-card';
+        div.innerHTML = `
+          <h3>${book.title}</h3>
+          <p><strong>Author:</strong> ${book.author || 'N/A'}</p>
+          <p><strong>Genre:</strong> ${book.genre || 'N/A'}</p>
+          <p><strong>Year:</strong> ${book.year || 'N/A'}</p>
+          <p><strong>Reviews:</strong> ${book.reviews.length}</p>
+        `;
+        bookList.appendChild(div);
+      });
+    }
+
+    loadBooks();
+  </script>
+</body>
+</html>
